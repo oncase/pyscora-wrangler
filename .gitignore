@@ -1,3 +1,10 @@
+# VsCode
+.vscode/
+
+# Testing functions
+test_data/
+testing.py
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
