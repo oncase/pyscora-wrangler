@@ -6,12 +6,14 @@ import pyarrow.parquet as pq
 from pyscora_wrangler.utils import overwrite_folder
 import os
 
-def to_parquet(stream,
-               output_parquet:str,
-               multiple_files=False,
-               print_every=None,
-               mode='overwrite',
-               chunksize=None):
+def to_parquet(
+    stream,
+    output_parquet:str,
+    multiple_files=False,
+    print_every=None,
+    mode='overwrite',
+    chunksize=None
+    ):
     """
     Write chunks of pandas.DataFrame into a single or multiple parquet files.
 
