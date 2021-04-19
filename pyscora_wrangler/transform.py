@@ -49,8 +49,9 @@ def to_parquet(
         stream = np.array_split(stream, chunksize)
     
     if multiple_files:
-        for index, chunk in enumerate(stream):
-            print(f"Reading chunk {index}.")
+        for i, chunk in enumerate(stream):
+            if print_every and (i % print_every) == 0:
+                print(f"Reading chunk {i}.")
             # Create a parquet table from your first chunk.
             if index == 0:
                 table = pa.Table.from_pandas(chunk)
@@ -59,7 +60,7 @@ def to_parquet(
                 table = pa.Table.from_pandas(chunk, schema=schema)
             pa.parquet.write_table(table,
                                    where=f"{output_parquet}/" + 
-                                   f"chunk_{index}.parquet")
+                                   f"chunk_{i}.parquet")
             
     if multiple_files == False:
         for i, chunk in enumerate(stream):
