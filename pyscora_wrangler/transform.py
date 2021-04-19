@@ -6,14 +6,15 @@ import pyarrow.parquet as pq
 from pyscora_wrangler.utils import overwrite_folder
 import os
 
+
 def to_parquet(
     stream,
-    output_parquet:str,
+    output_parquet: str,
     multiple_files=False,
     print_every=None,
     mode='overwrite',
     chunksize=None
-    ):
+):
     """
     Write chunks of pandas.DataFrame into a single or multiple parquet files.
 
@@ -34,7 +35,7 @@ def to_parquet(
             'overwrite'.
         chunksize (int, optional): Only used if 'stream' is pd.DataFrame. The 
         chunksize to split the pd.DataFrame. Defaults to None.
-            
+
     Returns:
         None.
     """
@@ -42,12 +43,12 @@ def to_parquet(
         overwrite_folder(output_parquet)
     if mode == 'overwrite' and not multiple_files:
         os.remove(output_parquet)
-    
+
     if isinstance(stream, pd.DataFrame):
         print('Breaking DataFrame into chunks...')
         chunksize = len(stream) // chunksize
         stream = np.array_split(stream, chunksize)
-    
+
     if multiple_files:
         for i, chunk in enumerate(stream):
             if print_every and (i % print_every) == 0:
@@ -59,9 +60,9 @@ def to_parquet(
             else:
                 table = pa.Table.from_pandas(chunk, schema=schema)
             pa.parquet.write_table(table,
-                                   where=f"{output_parquet}/" + 
+                                   where=f"{output_parquet}/" +
                                    f"chunk_{i}.parquet")
-            
+
     if multiple_files == False:
         for i, chunk in enumerate(stream):
             if print_every and (i % print_every) == 0:
@@ -69,9 +70,9 @@ def to_parquet(
             if i == 0:
                 # Infer schema and open parquet file on first chunk
                 parquet_schema = pa.Table.from_pandas(df=chunk).schema
-                parquet_writer = pq.ParquetWriter(output_parquet, parquet_schema
-                                                  ,compression='snappy')
-                
+                parquet_writer = pq.ParquetWriter(
+                    output_parquet, parquet_schema, compression='snappy')
+
             table = pa.Table.from_pandas(chunk, schema=parquet_schema)
             parquet_writer.write_table(table)
         parquet_writer.close()
