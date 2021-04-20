@@ -46,7 +46,7 @@ def to_parquet(
             if print_every and (i % print_every) == 0:
                 print(f"Reading chunk {i}.")
             # Create a parquet table from your first chunk.
-            if index == 0:
+            if i == 0:
                 table = pa.Table.from_pandas(chunk)
                 schema = table.schema
             else:
@@ -55,7 +55,7 @@ def to_parquet(
                                    where=f"{output_parquet}/" +
                                    f"chunk_{i}.parquet")
 
-    if multiple_files == False:
+    if multiple_files is False:
         for i, chunk in enumerate(stream):
             if print_every and (i % print_every) == 0:
                 print(f"Reading chunk {i}.")
