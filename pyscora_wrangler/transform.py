@@ -2,9 +2,6 @@ import pandas as pd
 import numpy as np
 import pyarrow as pa
 import pyarrow.parquet as pq
-# Utils
-from pyscora_wrangler.utils import overwrite_folder
-import os
 
 
 def to_parquet(
@@ -39,11 +36,6 @@ def to_parquet(
     Returns:
         None.
     """
-    if mode == 'overwrite' and multiple_files:
-        overwrite_folder(output_parquet)
-    if mode == 'overwrite' and not multiple_files:
-        os.remove(output_parquet)
-
     if isinstance(stream, pd.DataFrame):
         print('Breaking DataFrame into chunks...')
         chunksize = len(stream) // chunksize
