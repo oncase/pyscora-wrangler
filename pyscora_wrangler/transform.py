@@ -7,36 +7,43 @@ import pyarrow.parquet as pq
 def to_parquet(
     stream,
     output_parquet: str,
-    multiple_files=False,
+    multiple_files: bool = False,
     print_every=None,
-    mode='overwrite',
-    chunksize=None
+    chunksize: int = None
 ):
     """
-    Write chunks of pandas.DataFrame into a single or multiple parquet files.
+    Overwrite chunks of pandas.DataFrame into a single or multiple parquet
+    files.
 
     Args:
-        stream (Chunk generator or pd.DataFrame): Stream of data through chunks.
-        If it is a single pd.DataFrame then splits into a chunk list using
-        'chunksize' argument.
-        outuput_parquet (str): filepath to write the single file, or path to the
-            folder where to write multiple chunks file.
-        multiple_files (bool, optional): if True, then the 'output_parquet' must
-            be a folder path, otherwise, it must be a file path.
+        stream (pd.io.parsers.TextFileReader or pd.core.frame.DataFrame):
+        Stream of data through chunks. If it is a single pd.DataFrame then
+        splits into a chunk list using 'chunksize' argument.
+        outuput_parquet (str): filepath to write the single file, or path to
+        the folder where to write multiple chunks file.
+        multiple_files (bool, optional): if True, then the 'output_parquet' 
+        must be a folder path, otherwise, it must be a file path.
         print_every (int, optional): Print the chunk index every 'print every'.
             If None, then it does not print. Defaults to None.
-        mode (str, optional): It can be either 'overwrite' or 'append'. If 
-            'overwrite', deletes folder/file and rewrite it. If 'appends' and 
-            'multiple_files' is True then it writes following the current chunk 
-            division of "chunk_0.parquet", "chunk_1.parquet", etc. Defaults to 
-            'overwrite'.
         chunksize (int, optional): Only used if 'stream' is pd.DataFrame. The 
         chunksize to split the pd.DataFrame. Defaults to None.
 
     Returns:
         None.
     """
+    if (not isinstance(stream, pd.core.frame.DataFrame) and
+            not isinstance(stream, pd.io.parsers.TextFileReader)):
+        # Raise Exception and print the stream type to help clarify.
+        your_stream_type = f'Your stream type: {str(type(stream))}'
+        raise ValueError(your_stream_type +
+                         " 'stream' argument must be either pd.DataFrame " +
+                         "or pd.io.parsers.TextFileReader")
+
     if isinstance(stream, pd.DataFrame):
+        if not chunksize:
+            raise Exception("If using stream as a pd.Dataframe, must also " +
+                            "pass the value of chunksize.")
+
         print('Breaking DataFrame into chunks...')
         chunksize = len(stream) // chunksize
         stream = np.array_split(stream, chunksize)
