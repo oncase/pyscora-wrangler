@@ -7,7 +7,7 @@ on:
       - .github/workflows/pr-style-check.yml
     branches:
       - dev
-      - master    
+      - main    
 
 jobs:
   checks:
