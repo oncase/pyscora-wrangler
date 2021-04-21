@@ -30,7 +30,7 @@ jobs:
           use-black: false
           use-mypy: false
           use-isort: false
-          extra-flake8-options: --output-file=./flake8.out
+          extra-flake8-options: --output-file=./flake8.out --statistics"
 
       - name: Formats flake8 output on failure
         if: ${{ failure() }}
@@ -45,7 +45,8 @@ jobs:
         run: |
           echo "✅  Flake8 output: Looking good  👍 " >> ./flake8-formatted.out
 
-      - name: The job has failed
+      - name: Comments the result
+        if: always()
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           header: stylingtest
