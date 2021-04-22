@@ -21,11 +21,11 @@ def to_parquet(
         splits into a chunk list using 'chunksize' argument.
         outuput_parquet (str): filepath to write the single file, or path to
         the folder where to write multiple chunks file.
-        multiple_files (bool, optional): if True, then the 'output_parquet' 
+        multiple_files (bool, optional): if True, then the 'output_parquet'
         must be a folder path, otherwise, it must be a file path.
         print_every (int, optional): Print the chunk index every 'print every'.
-            If None, then it does not print. Defaults to None.
-        chunksize (int, optional): Only used if 'stream' is pd.DataFrame. The 
+        If None, then it does not print. Defaults to None.
+        chunksize (int, optional): Only used if 'stream' is pd.DataFrame. The
         chunksize to split the pd.DataFrame. Defaults to None.
 
     Returns:
