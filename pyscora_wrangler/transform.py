@@ -19,7 +19,7 @@ def to_parquet(
         stream (pd.io.parsers.TextFileReader or pd.core.frame.DataFrame):
         Stream of data through chunks. If it is a single pd.DataFrame then
         splits into a chunk list using 'chunksize' argument.
-        outuput_parquet (str): filepath to write the single file, or path to
+        output_parquet (str): filepath to write the single file, or path to
         the folder where to write multiple chunks file.
         multiple_files (bool, optional): if True, then the 'output_parquet'
         must be a folder path, otherwise, it must be a file path.
