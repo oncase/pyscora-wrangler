@@ -5,14 +5,12 @@ import pyarrow.parquet as pq
 
 
 def to_parquet(
-    stream,
-    output_parquet: str,
-    multiple_files: bool = False,
-    print_every=None,
-    chunksize: int = None
-):
-    """
-    Overwrite chunks of pandas.DataFrame into a single or multiple parquet
+        stream,
+        output_parquet: str,
+        multiple_files: bool = False,
+        print_every=None,
+        chunksize: int = None):
+    """ Overwrite chunks of pandas.DataFrame into a single or multiple parquet
     files.
 
     Args:
