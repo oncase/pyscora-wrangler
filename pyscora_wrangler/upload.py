@@ -11,7 +11,7 @@ from botocore.exceptions import ClientError
 
 def upload_file_s3(file_name, s3_path=None):
     """Upload single file to a specific bucket.
-    
+
     Args:
         file_name (str): File to upload.
         s3_path (str): s3 path.
@@ -62,10 +62,7 @@ def mp_folder_s3_upload(folder_path, s3_folder_path, n_processes=None):
                 's3_path': s3_folder_path + '/' + tail_of_filename
             }
             kwargs.append(arg_dict)
-        
+
         result_vector = p.map(_upload_file_s3_single_argument, kwargs)
-        
+
         return all(result_vector)
-        
-        
-        
