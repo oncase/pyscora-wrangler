@@ -9,7 +9,7 @@ import boto3
 from botocore.exceptions import ClientError
 
 
-def upload_file_s3(file_name, s3_path=None):
+def upload_file_s3(file_name, s3_path):
     """Upload single file to a specific bucket.
 
     Args:
