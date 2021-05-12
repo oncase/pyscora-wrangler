@@ -3,7 +3,6 @@
 
 # Testing functions
 test_data/
-test/
 testing.py
 
 # Byte-compiled / optimized / DLL files
