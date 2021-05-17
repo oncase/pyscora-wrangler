@@ -56,7 +56,7 @@ def mp_folder_s3_upload(folder_path, s3_folder_path, n_processes=None):
     Args:
         folder_path (str): path of the local folder.
         s3_folder_path (str): S3 folder path.
-        n_processes (str, optional): Number of the processes to use.
+        n_processes (int, optional): Number of the processes to use.
         Defaults to None, which means to use the results of os.cpu_count().
 
     Returns:
