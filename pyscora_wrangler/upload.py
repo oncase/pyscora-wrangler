@@ -26,14 +26,17 @@ def upload_file_s3(
     Returns:
         [bool]: True if file was uploaded, else False.
     """
+    print(file_name)
+    print(s3_path)
     s3_client = boto3.client('s3') if boto3_client is None else boto3_client
     # Checking if boto3 client is valid.
     try:
-        s3_client.upload_file()
+        s3_client.upload_file
     except AttributeError as error:
         error = ValueError("Please, use a valid s3 client, like " +
                            "boto3.client('s3')")
         raise error
+
     try:
         s3_path_parsed = parse_s3_path(s3_path)
         s3_client.upload_file(file_name,
@@ -46,8 +49,7 @@ def upload_file_s3(
 
 
 def _upload_file_s3_single_argument(kwargs):
-    return upload_file_s3(file_name=kwargs['file_name'],
-                          s3_path=kwargs['s3_path'])
+    return upload_file_s3(**kwargs)
 
 
 def mp_folder_s3_upload(folder_path, s3_folder_path, n_processes=None):
