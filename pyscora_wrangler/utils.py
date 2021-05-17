@@ -13,13 +13,23 @@ def make_folder(directory):
         os.makedirs(directory)
 
 
-def parse_s3_path(s3_path):
-    if s3_path[0:5] != 's3://':
-        raise ValueError("There must be s3:// in 's3_path'.")
+def get_bucket_uri_parts(uri_path):
+    """Given a URI path get the important parts.
 
-    split = s3_path.split('/')
+    Args:
+        uri_path (str): URI path of a valid bucket system such as AWS or GCS.
+
+    Raises:
+        ValueError: If the path is invalid.
+
+    Returns:
+        [dict]: Dictionary containing the 'bucket' and 'object_path'.
+    """
+    if not uri_path.split(':')[0] in ['s3', 'gs']:
+        raise ValueError('Must be a valid URI path.')
+    split = uri_path.split('/')
     results_dict = {
         'bucket': split[2],
-        'object_name': '/'.join(split[3:])
+        'object_path': '/'.join(split[3:])
     }
     return results_dict
