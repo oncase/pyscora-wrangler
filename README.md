@@ -16,8 +16,3 @@ You can also build it with the command and install it through pip or Poetry:
 ```bash
 poetry build
 ```
-
-# Testing
-
-There is a crude form of test in the test/ folder. A collection of codes to
-test the development of the functions.
