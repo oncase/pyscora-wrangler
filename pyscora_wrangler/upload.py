@@ -9,18 +9,31 @@ import boto3
 from botocore.exceptions import ClientError
 
 
-def upload_file_s3(file_name, s3_path):
+def upload_file_s3(
+    file_name,
+    s3_path,
+    boto3_client=None
+) -> bool:
     """Upload single file to a specific bucket.
 
     Args:
         file_name (str): File to upload.
         s3_path (str): s3 path.
         file_name is used. Defaults to None.
+        boto3_client (Optional, botocore.client.s3): boto3 s3 client for
+        connecting to AWS. If None it will create a client.
 
     Returns:
         [bool]: True if file was uploaded, else False.
     """
-    s3_client = boto3.client('s3')
+    s3_client = boto3.client('s3') if boto3_client is None else boto3_client
+    # Checking if boto3 client is valid.
+    try:
+        s3_client.upload_file()
+    except AttributeError as error:
+        error = ValueError("Please, use a valid s3 client, like " +
+                           "boto3.client('s3')")
+        raise error
     try:
         s3_path_parsed = parse_s3_path(s3_path)
         s3_client.upload_file(file_name,
