@@ -26,8 +26,6 @@ def upload_file_s3(
     Returns:
         [bool]: True if file was uploaded, else False.
     """
-    print(file_name)
-    print(s3_path)
     s3_client = boto3.client('s3') if boto3_client is None else boto3_client
     # Checking if boto3 client is valid.
     try:
@@ -56,7 +54,7 @@ def mp_folder_s3_upload(
     folder_path,
     s3_folder_path,
     n_processes=None
-):
+) -> bool:
     """Upload all the files of the folder to s3 using multiprocessing.
 
     Args:
