@@ -2,6 +2,7 @@
 import os
 
 from multiprocessing import Pool
+import threading
 
 # AWS S3
 from pyscora_wrangler.utils import get_bucket_uri_parts
@@ -83,3 +84,54 @@ def mp_folder_s3_upload(
         result_vector = p.map(_upload_file_s3_single_argument, kwargs)
 
         return all(result_vector)
+
+
+def _upload_list_of_files_s3(kwargs_list):
+    for kwarg in kwargs_list:
+        _upload_file_s3_single_argument(kwarg)
+
+
+def mt_folder_s3_upload(
+    folder_path,
+    s3_folder_path,
+    n_threads=os.cpu_count()
+) -> bool:
+    """Upload all the files of the folder to s3 using multithreading.
+
+    Args:
+        folder_path (str): path of the local folder.
+        s3_folder_path (str): S3 folder path.
+        n_processes (int, optional): Number of threads to use.
+        Defaults to "n", which means to use the results of os.cpu_count().
+
+    Returns:
+        [bool]: Returns True if all of the threads have uploaded
+        successfully. Returns False otherwise.
+    """
+    files = os.listdir(folder_path)
+    files = [os.path.join(folder_path, i) for i in files]
+
+    kwargs = []
+    for f in files:
+        tail_of_filename = os.path.split(f)[1]
+        arg_dict = {
+            'file_name': f,
+            's3_path': s3_folder_path + '/' + tail_of_filename
+        }
+        kwargs.append(arg_dict)
+    
+    print(n_threads)
+    print(len(kwargs))
+    print(len(kwargs) // n_threads)
+    print(len(kwargs) % n_threads)
+    
+    block_size = (len(kwargs) // n_threads)
+    
+    threads = []
+    for i in range(n_threads):
+        aux = kwargs[(i*block_size):((i+1)*block_size)]
+        t = threading.Thread(target=_upload_list_of_files_s3,
+                             args=(aux,))
+        threads.append(t)
+        t.start()
+    
