@@ -9,13 +9,14 @@ def get_sql_ctas_athena(
     athena_metadata,
     parquet_path,
     table_name
-) -> str: 
+) -> str:
     """
     Create a SQL CTAS query for a given metadata, table name and parquet path.
     There is no specification for database in the query.
     Args:
-        athena_metadata (dict): dictionary containing column name and data type.
-        Normally, this is the result of awswrangler.s3.read_parquet_metadata()[0].
+        athena_metadata (dict): dictionary containing column name and
+        data type. Normally, this is the result of
+        awswrangler.s3.read_parquet_metadata()[0].
         parquet_path (str): parquet path in S3 fs. 
         table_name (str): Name of the table to create.
     Returns:
@@ -46,25 +47,28 @@ def create_athena_table_from_parquet(
     Args:
         parquet_path (str): a parquet folder path in S3 fs.
         table_name (str): Name of the table to be created. Defaults to None.
-        When None, it will default to the name of the parquet folder or parquet file.
+        When None, it will default to the name of the parquet
+        folder or parquet file.
         database (str): Athena database where the table will be created.
         Must previously exist.
-        athena_work_group (str): Athena workgroup to be specified. Defaults to None.
-        s3_staging_dir (str): S3 path to store the results of the Athena table creation.
+        athena_work_group (str): Athena workgroup to be specified.
+        Defaults to None.
+        s3_staging_dir (str): S3 path to store the results of the
+        Athena table creation.
     Returns:
         bool: True if the process had no errors, False, otherwise.
     """
     if table_name is None:
         table_name = os.path.split(parquet_path)[1]
-    
+
     athena_metadata = wr.s3.read_parquet_metadata(path=parquet_path)[0]
     try:
         if len(athena_metadata) > 0:
-            wr.catalog.delete_table_if_exists(database=database, table=table_name)
+            wr.catalog.delete_table_if_exists(
+                database=database, table=table_name)
             logging.info(f'Deleted {table_name}.')
-            
-            
-            ctas_sql = get_sql_ctas_athena(athena_metadata, parquet_path, table_name)
+            ctas_sql = get_sql_ctas_athena(
+                athena_metadata, parquet_path, table_name)
             conn = connect(
                 s3_staging_dir=s3_staging_dir,
                 schema_name=database,
@@ -75,7 +79,9 @@ def create_athena_table_from_parquet(
             logging.info(f'Created {table_name}.')
             logging.info(f'SQL CTAS query:\n{ctas_sql}') if verbose else None
         else:
-            logging.info(f'There is no metadata for the parquet_path. Skipping table {table_name} creation.')
+            logging.info(
+                ('There is no metadata for the parquet_path. ' +
+                 f'Skipping table {table_name} creation.'))
     except Exception:
         logging.error(f"Error on CTAS of {table_name} on Athena.")
         print(traceback.print_exc())
