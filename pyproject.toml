@@ -13,6 +13,7 @@ numpy = "^1.20.2"
 pandas = "^1.2.3"
 pyarrow = "^3.0.0"
 fastparquet = "^0.5.0"
+smart-open = {extras = ["all"], version = "^5.1.0"}
 
 [tool.poetry.dev-dependencies]
 flake8 = "^3.8.4"
