@@ -34,3 +34,25 @@ def decoder_of_files(
             for line in input_file:
                 line = line.decode(dcd_output)
                 new_file.write(line)
+
+
+def get_bucket_uri_parts(uri_path):
+    """Given a URI path get the important parts.
+
+    Args:
+        uri_path (str): URI path of a valid bucket system such as AWS or GCS.
+
+    Raises:
+        ValueError: If the path is invalid.
+
+    Returns:
+        [dict]: Dictionary containing the 'bucket' and 'object_path'.
+    """
+    if not uri_path.split(':')[0] in ['s3', 'gs']:
+        raise ValueError('Must be a valid URI path.')
+    split = uri_path.split('/')
+    results_dict = {
+        'bucket': split[2],
+        'object_path': '/'.join(split[3:])
+    }
+    return results_dict

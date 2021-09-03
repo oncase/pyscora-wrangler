@@ -5,6 +5,7 @@ poetry.lock/
 .vscode/
 
 # Testing functions
+test_local/
 test_data/
 testing.py
 

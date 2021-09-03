@@ -16,6 +16,7 @@ fastparquet = "^0.5.0"
 smart-open = {extras = ["all"], version = "^5.1.0"}
 pyathena = "^2.3.0"
 awswrangler = "^2.10.0"
+boto3 = "^1.17.70"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^3.8.4"
