@@ -6,7 +6,7 @@ import pyarrow.parquet as pq
 
 def to_parquet(
     stream,
-    output_parquet: str,
+    output_path: str,
     multiple_files: bool = False,
     print_every=None,
     chunksize: int = None
@@ -21,7 +21,7 @@ def to_parquet(
         splits into a chunk list using 'chunksize' argument.
         outuput_parquet (str): filepath to write the single file, or path to
         the folder where to write multiple chunks file.
-        multiple_files (bool, optional): if True, then the 'output_parquet'
+        multiple_files (bool, optional): if True, then the 'output_path'
         must be a folder path, otherwise, it must be a file path.
         print_every (int, optional): Print the chunk index every 'print every'.
         If None, then it does not print. Defaults to None.
@@ -59,7 +59,7 @@ def to_parquet(
             else:
                 table = pa.Table.from_pandas(chunk, schema=schema)
             pa.parquet.write_table(table,
-                                   where=f"{output_parquet}/" +
+                                   where=f"{output_path}/" +
                                    f"chunk_{i}.parquet")
 
     if multiple_files is False:
@@ -70,7 +70,7 @@ def to_parquet(
                 # Infer schema and open parquet file on first chunk
                 parquet_schema = pa.Table.from_pandas(df=chunk).schema
                 parquet_writer = pq.ParquetWriter(
-                    output_parquet, parquet_schema, compression='snappy')
+                    output_path, parquet_schema, compression='snappy')
 
             table = pa.Table.from_pandas(chunk, schema=parquet_schema)
             parquet_writer.write_table(table)

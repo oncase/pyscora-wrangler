@@ -94,7 +94,8 @@ def _upload_list_of_files_s3(kwargs_list):
 def mt_folder_s3_upload(
     folder_path,
     s3_folder_path,
-    n_threads=os.cpu_count()
+    n_threads=os.cpu_count(),
+    boto3_client=None
 ) -> bool:
     """Upload all the files of the folder to s3 using multithreading.
 
@@ -110,28 +111,30 @@ def mt_folder_s3_upload(
     """
     files = os.listdir(folder_path)
     files = [os.path.join(folder_path, i) for i in files]
-
+    
+    s3_client = boto3.client('s3') if boto3_client is None else boto3_client
+    
     kwargs = []
     for f in files:
         tail_of_filename = os.path.split(f)[1]
         arg_dict = {
             'file_name': f,
-            's3_path': s3_folder_path + '/' + tail_of_filename
+            's3_path': s3_folder_path + '/' + tail_of_filename,
+            'boto3_client': s3_client
         }
         kwargs.append(arg_dict)
+        
+    def upload_parallel(chunk_objs):
+        threads = []
+        for i in range(len(chunk_objs)):
+            t = threading.Thread(target=_upload_file_s3_single_argument,
+                                 args=(chunk_objs[i],))
+            t.start()
+            threads.append(t)
+        for t in threads:
+            t.join()
     
-    print(n_threads)
-    print(len(kwargs))
-    print(len(kwargs) // n_threads)
-    print(len(kwargs) % n_threads)
-    
-    block_size = (len(kwargs) // n_threads)
-    
-    threads = []
-    for i in range(n_threads):
-        aux = kwargs[(i*block_size):((i+1)*block_size)]
-        t = threading.Thread(target=_upload_list_of_files_s3,
-                             args=(aux,))
-        threads.append(t)
-        t.start()
-    
+    for i in range(0, len(kwargs), n_threads):
+        upload_parallel(kwargs[i:(i+n_threads)])
+        
+    return True
