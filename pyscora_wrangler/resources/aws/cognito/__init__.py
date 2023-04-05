@@ -100,7 +100,7 @@ def get_users_from_group(
     return response_arr
 
 
-def delete_user_from_userpool(userpool_id: str, username: str, boto3_session: Session | None = None) -> None:
+def remove_user_from_userpool(userpool_id: str, username: str, boto3_session: Session | None = None) -> None:
     """Deletes a user as an administrator. Works on any user
 
     Calling this action requires developer credentials
@@ -119,11 +119,11 @@ def delete_user_from_userpool(userpool_id: str, username: str, boto3_session: Se
 
     try:
         client.admin_delete_user(UserPoolId=userpool_id, Username=username)
-        logger.info(f'[delete_user_from_userpool] User {username} deleted.')
+        logger.info(f'[remove_user_from_userpool] User {username} deleted.')
     except client.exceptions.UserNotFoundException:
-        logger.warning(f'[delete_user_from_userpool] User {username} does not exists. Skipping...')
+        logger.warning(f'[remove_user_from_userpool] User {username} does not exists. Skipping...')
     except Exception as err:
-        logger.error(f'[delete_user_from_userpool] {err}')
+        logger.error(f'[remove_user_from_userpool] {err}')
 
 
 def remove_user_from_group(
@@ -201,7 +201,7 @@ def create_user(
 
     except client.exceptions.CodeDeliveryFailureException:
         logger.critical('[create_user] Code delivery failed!')
-        delete_user_from_userpool(userpool_id=userpool_id, username=username)
+        remove_user_from_userpool(userpool_id=userpool_id, username=username)
 
     except Exception as err:
         logger.error(f'[create_user] {err}')
