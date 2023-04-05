@@ -1,1 +1,1 @@
-import aws
+from .resources import aws
