@@ -29,7 +29,8 @@ jobs:
         shell: bash
         run: |
           pip install "poetry==${{ vars.POETRY_VERSION }}"
-          poetry publish -u ${{ secrets.PYPI_USERNAME }} -p ${{ secrets.PYPI_PASSWORD }} --build
+          poetry config pypi-token.pypi ${{ secrets.PYPI_API_TOKEN }}
+          poetry publish --build
 
       - name: automatic-draft-release
         uses: marvinpinto/action-automatic-releases@v1.2.1
