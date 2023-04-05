@@ -1,0 +1,2 @@
+# SERVICE NAMES
+COGNITO_SERVICE_NAME = 'cognito-idp'
