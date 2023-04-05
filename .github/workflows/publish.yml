@@ -1,0 +1,42 @@
+name: Publish to Pypi
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: '0'
+
+      - name: Configure python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ vars.PYTHON_VERSION }}
+          cache: 'poetry'
+
+      - name: Publish lib
+        shell: bash
+        run: |
+          pip install "poetry==${{ vars.POETRY_VERSION }}"
+          poetry publish -u ${{ secrets.PYPI_USERNAME }} -p ${{ secrets.PYPI_PASSWORD }} --build
+
+      - name: automatic-draft-release
+        uses: marvinpinto/action-automatic-releases@v1.2.1
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          title: 'First release'
+          prerelease: false
+          automatic_release_tag: v1.0.0
+          files: |
+            LICENSE
