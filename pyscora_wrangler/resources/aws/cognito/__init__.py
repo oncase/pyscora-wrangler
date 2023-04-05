@@ -2,11 +2,40 @@ from typing import Any, List, Dict, Tuple
 
 from boto3.session import Session
 
-from ..utils import get_boto3_session
+from ..utils import get_boto3_session, get_user_secret_hash
 from ....utils.misc import setup_logger
 from ..constants import *
 
 logger = setup_logger('AWS Cognito')
+
+
+def get_user(userpool_id: str, username: str, boto3_session: Session | None = None) -> Dict[str, Any]:
+    """Gets the specified user by user name in a user pool as an administrator. Works on any user
+
+    Calling this action requires developer credentials
+
+    Args:
+        userpool_id (str): The user pool ID for the user pool where you want to get information about the user.
+        username (str): The user name of the user you want to retrieve.
+        boto3_session (Session | None, optional): Custom boto3 session. Defaults to None.
+
+    Returns:
+        Dict[str, Any]: Represents the response from the server from the request to get the specified user as an administrator.
+    """
+
+    session = get_boto3_session(boto3_session)
+    client = session.client(COGNITO_SERVICE_NAME)
+
+    try:
+        user = client.admin_get_user(UserPoolId=userpool_id, Username=username)
+
+        return user
+    except client.exceptions.UserNotFoundException:
+        logger.warning(f'[get_user] User {username} not found. It is not registered.')
+    except Exception as err:
+        logger.error(f'[get_user] {err}')
+
+    return None
 
 
 def get_all_users(
@@ -94,7 +123,7 @@ def delete_user_from_userpool(userpool_id: str, username: str, boto3_session: Se
     except client.exceptions.UserNotFoundException:
         logger.warning(f'[delete_user_from_userpool] User {username} does not exists. Skipping...')
     except Exception as err:
-        logger.error(err)
+        logger.error(f'[delete_user_from_userpool] {err}')
 
 
 def remove_user_from_group(
@@ -123,7 +152,7 @@ def remove_user_from_group(
     except client.exceptions.UserNotFoundException:
         logger.warning(f'[remove_user_from_group] User {username} does not exists. Skipping...')
     except Exception as err:
-        logger.error(err)
+        logger.error(f'[remove_user_from_group] {err}')
 
 
 def create_user(
@@ -134,7 +163,7 @@ def create_user(
     boto3_session: Session | None = None,
     *cognito_additional_args: Tuple,
     **cognito_additional_kwargs: Dict[str, Any],
-) -> Dict[str, Any] | None:
+) -> Dict[str, Any]:
     """Creates a new user in the specified user pool
 
     Calling this action requires developer credentials
@@ -149,7 +178,7 @@ def create_user(
         Addition args can be found at https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/cognito-idp/client/admin_create_user.html
 
     Returns:
-        Dict[str, Any] | None: The newly created user.
+        Dict[str, Any]: The newly created user.
     """
 
     session = get_boto3_session(boto3_session)
@@ -175,7 +204,40 @@ def create_user(
         delete_user_from_userpool(userpool_id=userpool_id, username=username)
 
     except Exception as err:
-        logger.error(err)
+        logger.error(f'[create_user] {err}')
+
+    return None
+
+
+def create_group(
+    userpool_id: str, group_name: str, description: str = '', boto3_session: Session | None = None
+) -> Dict[str, Any]:
+    """Creates a new group in the specified user pool
+
+    Calling this action requires developer credentials
+
+    Args:
+        userpool_id (str): The user pool ID for the user pool.
+        group_name (str): The name of the group. Must be unique.
+        description (str, optional): A string containing the description of the group. Defaults to ''.
+        boto3_session (Session | None, optional): Custom boto3 session. Defaults to None.
+
+    Returns:
+        Dict[str, Any]: The group object for the group.
+    """
+
+    session = get_boto3_session(boto3_session)
+    client = session.client(COGNITO_SERVICE_NAME)
+
+    try:
+        response = client.create_group(UserPoolId=userpool_id, GroupName=group_name, Description=description)
+        logger.info(f'[create_group] Group {group_name} created.')
+
+        return response
+    except client.exceptions.GroupExistsException:
+        logger.warning(f'[create_group] A group with the name {group_name} already exists. Skipping...')
+    except Exception as err:
+        logger.error(f'[create_group] {err}')
 
     return None
 
@@ -204,4 +266,124 @@ def add_user_to_group(userpool_id: str, username: str, group_name: str, boto3_se
     except client.exceptions.UserNotFoundException:
         logger.warning(f'[add_user_to_group] User {username} does not exists. Skipping...')
     except Exception as err:
-        logger.error(err)
+        logger.error(f'[add_user_to_group] {err}')
+
+
+def resend_confirmation_code(client_id: str, username: str, boto3_session: Session | None = None) -> Dict[str, Any]:
+    """Resends the confirmation (for confirmation of registration) to a specific user in the user pool
+
+    Args:
+        client_id (str): The ID of the client associated with the user pool.
+        username (str): The username attribute of the user to whom you want to resend a confirmation code.
+        boto3_session (Session | None, optional): Custom boto3 session. Defaults to None.
+
+    Returns:
+        Dict[str, Any]: The code delivery details returned by the server in response to the request to resend the confirmation code.
+    """
+
+    session = get_boto3_session(boto3_session)
+    client = session.client(COGNITO_SERVICE_NAME)
+
+    try:
+        response = client.resend_confirmation_code(ClientId=client_id, Username=username)
+        logger.info(f'[resend_confirmation_code] Confirmation code sent to user {username}')
+
+        return response
+    except client.exceptions.UserNotFoundException:
+        logger.warning(f'[resend_confirmation_code] User {username} does not exists. Skipping...')
+    except Exception as err:
+        logger.error(f'[resend_confirmation_code] {err}')
+
+    return None
+
+
+def set_user_password(
+    userpool_id: str, username: str, password: str, permanent: bool = True, boto3_session: Session | None = None
+) -> None:
+    """Sets the specified user's password in a user pool as an administrator. Works on any user
+
+    The password can be temporary or permanent. If it is temporary, the user status enters the `FORCE_CHANGE_PASSWORD` state. When the user next tries to sign in, the InitiateAuth/AdminInitiateAuth response will contain the `NEW_PASSWORD_REQUIRED` challenge. If the user doesn't sign in before it expires, the user won't be able to sign in, and an administrator must reset their password.
+    Once the user has set a new password, or the password is permanent, the user status is set to `Confirmed`.
+
+    Args:
+        userpool_id (str): The user pool ID for the user pool where you want to set the user's password.
+        username (str): The user name of the user whose password you want to set.
+        password (str): The password for the user.
+        permanent (bool, optional): `True` if the password is permanent, `False` if it is temporary. Defaults to True.
+        boto3_session (Session | None, optional): Custom boto3 session. Defaults to None.
+
+    Returns:
+        None
+    """
+
+    session = get_boto3_session(boto3_session)
+    client = session.client(COGNITO_SERVICE_NAME)
+
+    try:
+        client.admin_set_user_password(
+            UserPoolId=userpool_id, Username=username, Password=password, Permanent=permanent
+        )
+    except client.exceptions.UserNotFoundException:
+        logger.warning(f'[set_user_password] User {username} does not exists. Skipping...')
+    except Exception as err:
+        logger.error(f"[set_user_password] {err}")
+
+
+def authenticate_user(
+    userpool_id: str,
+    client_id: str,
+    username: str,
+    password: str,
+    auth_flow: str = 'ADMIN_NO_SRP_AUTH',
+    app_client_secret: str | None = None,
+    boto3_session: Session | None = None,
+) -> Dict[str, Any]:
+    """Initiates the authentication flow, as an administrator
+
+    Calling this action requires developer credentials
+
+    Args:
+        userpool_id (str): The ID of the Amazon Cognito user pool.
+        client_id (str): The app client ID.
+        username (str): The user name of the user you want to authenticate.
+        password (str): The password for the user.
+        auth_flow (str, optional): The authentication flow for this call to run. The API action will depend on this value. Defaults to 'ADMIN_NO_SRP_AUTH'.
+        app_client_secret (str | None, optional): The app client secret, if configured. Defaults to None.
+        boto3_session (Session | None, optional): Custom boto3 session. Defaults to None.
+
+    Returns:
+        Dict[str, Any]: Initiates the authentication response, as an administrator.
+
+    More info at: https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/cognito-idp/client/admin_initiate_auth.html
+    """
+
+    session = get_boto3_session(boto3_session)
+    client = session.client(COGNITO_SERVICE_NAME)
+
+    try:
+        auth_parameters = {'USERNAME': username, 'PASSWORD': password}
+
+        user_secret_hash = get_user_secret_hash(
+            client_id=client_id, app_client_secret=app_client_secret, username=username
+        )
+        if user_secret_hash:
+            auth_parameters['SECRET_HASH'] = user_secret_hash
+
+        client_metadata = {'username': username, 'password': password}
+
+        response = client.admin_initiate_auth(
+            UserPoolId=userpool_id,
+            ClientId=client_id,
+            AuthFlow=auth_flow,
+            AuthParameters=auth_parameters,
+            ClientMetadata=client_metadata,
+        )
+        logger.info(f'[authenticate_user] User {username} authenticated.')
+
+        return response
+    except client.exceptions.UserNotFoundException:
+        logger.warning(f'[authenticate_user] User {username} does not exists.')
+    except Exception as err:
+        logger.error(f'[authenticate_user] {err}')
+
+    return None
