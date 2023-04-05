@@ -1,1 +1,3 @@
-from .resources import aws
+from . import aws
+
+__all__ = ['aws']

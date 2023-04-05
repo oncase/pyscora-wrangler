@@ -2,6 +2,9 @@ import hmac
 import base64
 import hashlib
 from boto3.session import Session
+from .. import utils as common_utils
+
+setup_logger = common_utils.setup_logger
 
 
 def get_boto3_session(boto3_session: Session | None = None) -> Session:

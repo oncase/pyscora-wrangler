@@ -2,8 +2,7 @@ from typing import Any, List, Dict, Tuple
 
 from boto3.session import Session
 
-from ..utils import get_boto3_session, get_user_secret_hash
-from ....utils.misc import setup_logger
+from ..utils import get_boto3_session, get_user_secret_hash, setup_logger
 from ..constants import *
 
 logger = setup_logger('AWS Cognito')

@@ -1,5 +1,5 @@
 import logging
-from ..constants.colors import *
+from .constants import *
 
 
 class CustomLoggerFormatter(logging.Formatter):
@@ -18,3 +18,18 @@ class CustomLoggerFormatter(logging.Formatter):
         formatter = logging.Formatter(log_fmt)
 
         return formatter.format(record)
+
+
+def setup_logger(
+    name: str, level: int = logging.INFO, Formatter: logging.Formatter = CustomLoggerFormatter
+) -> logging.Logger:
+    logger = logging.getLogger(name)
+    logger.setLevel(level)
+
+    ch = logging.StreamHandler()
+    ch.setLevel(level)
+    ch.setFormatter(Formatter())
+
+    logger.addHandler(ch)
+
+    return logger

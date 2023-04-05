@@ -7,4 +7,4 @@
 
 Python package that consists mainly of wrappers for Data Engineering tasks.
 
-In order to see the docs, click on the module that you want inside the folder `pyscora_wrangler/resources`
+In order to see the docs, click on the module that you want inside the folder `pyscora_wrangler/${MODULE}`
