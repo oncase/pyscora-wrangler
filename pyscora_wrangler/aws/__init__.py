@@ -1,4 +1,3 @@
-from awswrangler import *
-from . import cognito
+from . import cognito, dynamodb
 
-__all__ = ['cognito']
+__all__ = ['cognito', 'dynamodb']
