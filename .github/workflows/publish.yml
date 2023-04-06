@@ -35,8 +35,8 @@ jobs:
         uses: marvinpinto/action-automatic-releases@v1.2.1
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          title: 'v1.1.0 DynamoDB and Athena added'
+          title: 'v1.1.1 Bug fixes in Athena'
           prerelease: false
-          automatic_release_tag: v1.1.0
+          automatic_release_tag: v1.1.1
           files: |
             LICENSE

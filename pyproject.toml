@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pyscora-wrangler"
-version = "1.1.0"
+version = "1.1.1"
 description = ""
 authors = ["Oncase <suporte@oncase.com.br>"]
 maintainers = ["Guilherme Morone <guilherme.morone@oncase.com.br>"]
