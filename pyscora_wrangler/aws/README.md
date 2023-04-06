@@ -1,5 +1,9 @@
 This module contains a set of functions to interact with AWS services.
 
+# Athena
+
+_To be done_
+
 # Cognito
 
 ## `add_user_to_group`
@@ -207,6 +211,10 @@ Calling this action requires developer credentials.
 ### Returns
 
 `None`
+
+# DynamoDB
+
+_To be done_
 
 # Other Services
 

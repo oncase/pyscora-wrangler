@@ -1,4 +1,5 @@
 from typing import Any, Dict, List, Literal, Tuple
+from awswrangler.dynamodb import *
 from boto3.session import Session
 from boto3.dynamodb.conditions import Key
 from ..utils import setup_logger, get_boto3_session, get_data_encoded, get_data_decoded
