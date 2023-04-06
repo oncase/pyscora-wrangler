@@ -98,11 +98,11 @@ def get_data_by_key(
     """
 
     session = get_boto3_session(boto3_session)
-    client = session.client(DYNAMODB_SERVICE_NAME)
+    resource = session.resource(DYNAMODB_SERVICE_NAME)
 
     data = None
 
-    dynamo_table = client.Table(table_name)
+    dynamo_table = resource.Table(table_name)
     response = dynamo_table.query(KeyConditionExpression=Key(key).eq(value))
     response = response.get("Items", [])
 
@@ -167,9 +167,9 @@ def put_item(
     """
 
     session = get_boto3_session(boto3_session)
-    client = session.client(DYNAMODB_SERVICE_NAME)
+    resource = session.resource(DYNAMODB_SERVICE_NAME)
 
-    table = client.Table(table_name)
+    table = resource.Table(table_name)
     encoded_data = get_data_encoded(data) if encode_data else data
     item = table.put_item(Item=encoded_data, *dynamodb_additional_args, **dynamodb_additional_kwargs)
 
