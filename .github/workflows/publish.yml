@@ -35,8 +35,8 @@ jobs:
         uses: marvinpinto/action-automatic-releases@v1.2.1
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          title: 'v1.1.2 Ldap module added'
+          title: 'v1.1.3 DynamoDB resource bug fixed'
           prerelease: false
-          automatic_release_tag: v1.1.2
+          automatic_release_tag: v1.1.3
           files: |
             LICENSE
