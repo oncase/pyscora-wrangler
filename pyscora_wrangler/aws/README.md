@@ -2,7 +2,7 @@ This module contains a set of functions to interact with AWS services.
 
 # Athena
 
-_To be done_
+See `./athena/__init__.py` for more details.
 
 # Cognito
 
@@ -214,7 +214,7 @@ Calling this action requires developer credentials.
 
 # DynamoDB
 
-_To be done_
+See `./dynamodb/__init__.py` for more details.
 
 # Other Services
 

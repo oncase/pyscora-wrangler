@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "pyscora-wrangler"
-version = "1.1.1"
-description = ""
+version = "1.1.2"
+description = "Python lib for DE"
 authors = ["Oncase <suporte@oncase.com.br>"]
 maintainers = ["Guilherme Morone <guilherme.morone@oncase.com.br>"]
 license = "MIT"
@@ -21,11 +21,13 @@ include = ["LICENSE"]
 
 [tool.poetry.dependencies]
 python = ">=3.8,<4.0"
-boto3 = "^1.26.107"
+boto3 = "^1.26.108"
 awswrangler = "^2.20.1"
 asyncio = "^3.4.3"
 pyathena = "^2.23.0"
 pyyaml = "^6.0"
+ldap3 = "^2.9.1"
+typeguard = "^3.0.2"
 
 
 [tool.poetry.group.dev.dependencies]

@@ -1,3 +1,3 @@
-from . import aws
+from . import aws, ldap
 
-__all__ = ['aws']
+__all__ = ['aws', 'ldap']
