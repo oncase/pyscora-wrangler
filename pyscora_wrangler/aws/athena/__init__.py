@@ -62,6 +62,7 @@ def create_athena_table_from_parquet(
     Returns:
         bool: True if the process had no errors, False, otherwise.
     """
+
     session = get_boto3_session(boto3_session)
 
     if table_name is None:
@@ -98,18 +99,18 @@ def create_athena_table_from_parquet(
 @measure_time
 def athena_refresh(
     database: str,
-    tables_metadatas_from_yaml: List[Dict[str, Any]] | None = None,
+    tables_metadatas: List[Dict[str, Any]] | None = None,
     yaml_metadatas_file_path: str | None = None,
     boto3_session: Session | None = None,
 ) -> None:
     """Refreshes athena tables
 
     Args:
-        database (str): AWS Database name. If the database does not exist, create a new one.
+        database (str): AWS Athena database name. If the database does not exist, create a new one.
 
         YOU MUST SPECIFY ONE OF THOSE:
-            tables_metadatas_from_yaml (List[Dict[str, Any]] | None, optional): Yaml file with athena table metadatas. Defaults to None.
-            yaml_metadatas_file_path (str | None, optional): Dictionary with athena table metadatas. Defaults to None.
+            tables_metadatas (List[Dict[str, Any]] | None, optional): List of dictionaries with athena tables metadatas. Defaults to None.
+            yaml_metadatas_file_path (str | None, optional): Yaml file with athena tables metadatas. Defaults to None.
 
             YOU MUST SPECIFY (FOR EACH TABLE):
 
@@ -132,7 +133,7 @@ def athena_refresh(
         logger.warning('[athena_refresh] No database was given.')
         return
 
-    if not tables_metadatas_from_yaml and not yaml_metadatas_file_path:
+    if not tables_metadatas and not yaml_metadatas_file_path:
         logger.warning(
             '[athena_refresh] Please, specify on of those parameters: `TABLES_METADAS_FROM_YAML` or `YAML_METADATAS_FILE_PATH`.'
         )
@@ -141,7 +142,7 @@ def athena_refresh(
     session = get_boto3_session(boto3_session)
 
     if database not in wr.catalog.databases(boto3_session=session).values:
-        logger.warning(f'[athena_refresh] Database {database} does not exist.')
+        logger.warning(f'[athena_refresh] Database {database} does not exist. Creating a new one...')
         try:
             wr.catalog.create_database(database, boto3_session=session)
             logger.info(f'[athena_refresh] Database {database} created.')
@@ -149,7 +150,7 @@ def athena_refresh(
             logger.error(f'[athena_refresh] {err}')
             return
 
-    tables = get_copy_metadata(yaml_metadatas_file_path) if yaml_metadatas_file_path else tables_metadatas_from_yaml
+    tables = get_copy_metadata(yaml_metadatas_file_path) if yaml_metadatas_file_path else tables_metadatas
 
     if not tables:
         logger.error('[athena_refresh] No table metadata was found.')
