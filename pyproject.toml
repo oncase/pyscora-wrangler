@@ -1,26 +1,31 @@
 [tool.poetry]
 name = "pyscora-wrangler"
-version = "1.0.0"
+version = "1.1.0"
 description = ""
-authors = ["Guilherme Morone <guilherme.morone@oncase.com.br>"]
+authors = ["Oncase <suporte@oncase.com.br>"]
+maintainers = ["Guilherme Morone <guilherme.morone@oncase.com.br>"]
 license = "MIT"
 readme = "README.md"
 homepage = "https://github.com/oncase/pyscora-wrangler"
 repository = "https://github.com/oncase/pyscora-wrangler"
-keywords = ["wrapper", "scora"]
+keywords = ["wrapper", "scora", "python", "data_engineering"]
 classifiers = [
     "Intended Audience :: Developers",
     "Natural Language :: English",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
 ]
-include = [
-    "LICENSE",
-]
+include = ["LICENSE"]
 
 [tool.poetry.dependencies]
 python = ">=3.8,<4.0"
+boto3 = "^1.26.107"
 awswrangler = "^2.20.1"
-boto3 = "^1.26.106"
+asyncio = "^3.4.3"
+pyathena = "^2.23.0"
+pyyaml = "^6.0"
 
 
 [tool.poetry.group.dev.dependencies]

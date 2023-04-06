@@ -2,6 +2,7 @@ import hmac
 import base64
 import hashlib
 from boto3.session import Session
+from ..utils import *
 
 
 def get_boto3_session(boto3_session: Session | None = None) -> Session:

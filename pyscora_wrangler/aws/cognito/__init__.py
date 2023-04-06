@@ -2,9 +2,8 @@ from typing import Any, List, Dict, Tuple
 
 from boto3.session import Session
 
-from ..utils import get_boto3_session, get_user_secret_hash
-from ....utils.misc import setup_logger
-from ..constants import *
+from ..utils import setup_logger, get_boto3_session, get_user_secret_hash
+from ..constants import COGNITO_SERVICE_NAME
 
 logger = setup_logger('AWS Cognito')
 
@@ -65,7 +64,7 @@ def get_all_users(
     response_arr: List[Dict[str, Any]] = []
 
     for users_by_page in response_iterator:
-        for user in users_by_page.get('Users'):
+        for user in users_by_page.get('Users', []):
             response_arr.append(user)
 
     return response_arr
@@ -94,7 +93,7 @@ def get_users_from_group(
     response_arr: List[Dict[str, Any]] = []
 
     for users_by_page in response_iterator:
-        for user in users_by_page.get('Users'):
+        for user in users_by_page.get('Users', []):
             response_arr.append(user)
 
     return response_arr
@@ -175,7 +174,7 @@ def create_user(
         force_alias_creation (bool, optional): This parameter is used only if the phone_number_verified or email_verified attribute is set to True. Otherwise, it is ignored. Defaults to False.
         boto3_session (Session | None, optional): Custom boto3 session. Defaults to None.
 
-        Addition args can be found at https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/cognito-idp/client/admin_create_user.html
+        Additional args can be found at https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/cognito-idp/client/admin_create_user.html
 
     Returns:
         Dict[str, Any]: The newly created user.

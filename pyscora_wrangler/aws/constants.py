@@ -1,2 +1,3 @@
 # SERVICE NAMES
 COGNITO_SERVICE_NAME = 'cognito-idp'
+DYNAMODB_SERVICE_NAME = 'dynamodb'
