@@ -52,7 +52,7 @@ def get_all_data_in_table(
         select ('ALL_ATTRIBUTES' | 'ALL_PROJECTED_ATTRIBUTES' | 'SPECIFIC_ATTRIBUTES' | 'COUNT', optional): The attributes to be returned in the result. Defaults to 'ALL_ATTRIBUTES'.
         boto3_session (Session | None, optional): Custom boto3 session. Defaults to None.
 
-        Additional args can be found athttps://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/dynamodb/client/scan.html
+        Additional args can be found at https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/dynamodb/client/scan.html
 
     Returns:
         List[Dict[str, Any]]: An array of item attributes that match the scan criteria. Each element in this array consists of an attribute name and the value for that attribute.
@@ -123,7 +123,7 @@ def get_all_tables_names(
     Args:
         boto3_session (Session | None, optional): Custom boto3 session. Defaults to None.
 
-        Additional args can be found athttps://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/dynamodb/client/list_tables.html
+        Additional args can be found at https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/dynamodb/client/list_tables.html
 
     Returns:
         List[str]: The names of the tables.
