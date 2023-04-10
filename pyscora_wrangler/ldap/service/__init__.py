@@ -98,7 +98,7 @@ class LdapService:
         return self.__user_is_authenticated
 
     def auth(self, username: str, password: str) -> bool:
-        """Authenticate user to ldap server
+        """Authenticate user to ldap server in SIMPLE mode
 
         Args:
             username (str): The user `username`.
@@ -122,7 +122,6 @@ class LdapService:
 
                 raise ValueError('Invalid credentials.')
 
-            root_dn = self.ldap_config.get('root_dn', '')
             port = int(self.ldap_config.get('port', 389))
             server_alias = self.ldap_config.get('server_alias', [])
 
@@ -135,10 +134,12 @@ class LdapService:
                 else None,
             )
 
-            self.__ldap_user = f'CN={self.__ldap_username},{root_dn}'
-
             self.__ldap_connection = Connection(
-                server, user=self.__ldap_user, password=self.__ldap_password, raise_exceptions=False
+                server,
+                user=self.__ldap_username,
+                password=self.__ldap_password,
+                authentication='SIMPLE',
+                raise_exceptions=False,
             )
 
             if self.__ldap_connection.bind():
@@ -150,6 +151,15 @@ class LdapService:
             logger.error(f'[auth] {err}')
 
         return self.is_user_authenticated()
+
+    def logout(self) -> None:
+        """Unbind the connect to the ldap server"""
+
+        if self.__ldap_connection:
+            try:
+                self.__ldap_connection.unbind()
+            except Exception as err:
+                logger.error(f'[logout] {err}')
 
     def get_ldap_groups(self) -> List[str]:
         """Returns A list containing the ldap groups."""
