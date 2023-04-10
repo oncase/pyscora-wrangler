@@ -1,6 +1,8 @@
+# Ldap
+
 Services and functions to simplify ldap management, including extracting ldap infos.
 
-# LdapService
+## LdapService
 
 Class with utils ldap methods.
 
