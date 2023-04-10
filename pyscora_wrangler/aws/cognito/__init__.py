@@ -325,7 +325,7 @@ def set_user_password(
     except client.exceptions.UserNotFoundException:
         logger.warning(f'[set_user_password] User {username} does not exists. Skipping...')
     except Exception as err:
-        logger.error(f"[set_user_password] {err}")
+        logger.error(f'[set_user_password] {err}')
 
 
 def authenticate_user(

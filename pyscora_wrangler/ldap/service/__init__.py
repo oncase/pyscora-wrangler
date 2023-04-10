@@ -144,9 +144,9 @@ class LdapService:
 
             if self.__ldap_connection.bind():
                 self.__user_is_authenticated = True
-                logger.info("[auth] Successful bind to ldap server.")
+                logger.info('[auth] Successful bind to ldap server.')
             else:
-                logger.error(f"[auth] Cannot bind to ldap server: {self.__ldap_connection.last_error}.")
+                logger.error(f'[auth] Cannot bind to ldap server: {self.__ldap_connection.last_error}.')
         except Exception as err:
             logger.error(f'[auth] {err}')
 
@@ -188,31 +188,31 @@ class LdapService:
         try:
             self.__ldap_connection.search(
                 search_base=root_dn,
-                search_filter="(objectclass=*)",
+                search_filter='(objectclass=*)',
                 search_scope=SUBTREE,
-                attributes=["member"],
+                attributes=['member'],
                 size_limit=0,
             )
 
             response = json.loads(self.__ldap_connection.response_to_json())
 
-            if type(response.get("entries")) == list and len(response.get("entries")) > 0:
-                for entry in response.get("entries"):
+            if type(response.get('entries')) == list and len(response.get('entries')) > 0:
+                for entry in response.get('entries'):
                     for member in entry.member.values:
                         self.__ldap_connection.search(
                             search_base=root_dn,
-                            search_filter=f"(distinguishedName={member})",
-                            attributes=["sAMAccountName"],
+                            search_filter=f'(distinguishedName={member})',
+                            attributes=['sAMAccountName'],
                         )
 
                         user = self.__ldap_connection.entries[0].sAMAccountName.values
 
                         self.__ldap_users.append(user)
 
-                cn_groups = response.get("entries")[0].get("attributes").get("member")
+                cn_groups = response.get('entries')[0].get('attributes').get('member')
 
                 for cn_group in cn_groups:
-                    groups.append(cn_group.split(",")[0].replace("CN=", ""))
+                    groups.append(cn_group.split(',')[0].replace('CN=', ''))
 
                 self.__ldap_groups = groups
         except Exception as err:
