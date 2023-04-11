@@ -81,7 +81,7 @@ def measure_time(func: FunctionType):
             return func(*args, **kwargs)
         finally:
             end_ = int(round(time() * 1000)) - start
-            print(f"{func.__name__} execution time: {end_ if end_ > 0 else 0} ms")
+            print(f'{func.__name__} execution time: {end_ if end_ > 0 else 0} ms')
 
     return _time_it
 
@@ -89,11 +89,11 @@ def measure_time(func: FunctionType):
 def get_metadata_from_yaml(file_path: str) -> Any:
     data = []
 
-    with open(file_path, encoding="utf-8") as file:
+    with open(file_path, encoding='utf-8') as file:
         data = yaml.load(file, Loader=yaml.FullLoader)
 
     return data
 
 
 def get_copy_metadata(file_path: str) -> Any:
-    return get_metadata_from_yaml(file_path).get("copy")
+    return get_metadata_from_yaml(file_path).get('copy')

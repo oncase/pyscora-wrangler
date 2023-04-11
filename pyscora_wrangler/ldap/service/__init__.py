@@ -122,6 +122,7 @@ class LdapService:
 
                 raise ValueError('Invalid credentials.')
 
+            root_dn = self.ldap_config.get('root_dn')
             port = int(self.ldap_config.get('port', 389))
             server_alias = self.ldap_config.get('server_alias', [])
 
@@ -136,7 +137,7 @@ class LdapService:
 
             self.__ldap_connection = Connection(
                 server,
-                user=self.__ldap_username,
+                user=f'CN={self.__ldap_username},{root_dn}',
                 password=self.__ldap_password,
                 authentication='SIMPLE',
                 raise_exceptions=False,
@@ -144,9 +145,9 @@ class LdapService:
 
             if self.__ldap_connection.bind():
                 self.__user_is_authenticated = True
-                logger.info("[auth] Successful bind to ldap server.")
+                logger.info('[auth] Successful bind to ldap server.')
             else:
-                logger.error(f"[auth] Cannot bind to ldap server: {self.__ldap_connection.last_error}.")
+                logger.error(f'[auth] Cannot bind to ldap server: {self.__ldap_connection.last_error}.')
         except Exception as err:
             logger.error(f'[auth] {err}')
 
@@ -162,61 +163,60 @@ class LdapService:
                 logger.error(f'[logout] {err}')
 
     def get_ldap_groups(self) -> List[str]:
-        """Returns A list containing the ldap groups."""
+        """Returns A list containing the ldap groups"""
 
         return self.__ldap_groups
 
     def get_ldap_users(self) -> List[str]:
-        """Returns A list containing the ldap users."""
+        """Returns A list containing the ldap users"""
 
         return self.__ldap_users
 
-    def set_ldap_users_and_groups(self) -> Tuple[List[str], List[str]] | None:
-        """Set the ldap groups and users.
+    def __set_ldap_arrays(self, search_filter: str) -> List[str]:
+        root_dn = self.ldap_config.get('root_dn', '')
+
+        self.__ldap_connection.search(
+            search_base=root_dn, search_filter=search_filter, search_scope=SUBTREE, size_limit=0
+        )
+
+        arr = []
+        for entry in self.__ldap_connection.entries:
+            arr.append(entry.entry_dn)
+
+        return arr
+
+    def set_ldap_users(self) -> List[str] | None:
+        """Set the ldap users
 
         Returns:
-            Tuple[List[str], List[str]] | None: Returns None if an error occurs in the process. Otherwise, returns a Tuple the lists of the ldap groups and the ldap users.
+            List[str] | None: Returns None if an error occurs in the process. Otherwise, returns the list of the ldap users.
         """
 
         if not self.is_user_authenticated():
-            logger.warning('[set_ldap_users_and_groups] User is not authenticated. Skipping...')
+            logger.warning('[set_ldap_users] User is not authenticated. Skipping...')
             return None
 
-        groups = []
-        root_dn = self.ldap_config.get('root_dn', '')
+        users_search_filter = '(objectClass=person)'
+        users_dn = self.__set_ldap_arrays(search_filter=users_search_filter)
 
-        try:
-            self.__ldap_connection.search(
-                search_base=root_dn,
-                search_filter="(objectclass=*)",
-                search_scope=SUBTREE,
-                attributes=["member"],
-                size_limit=0,
-            )
+        self.__ldap_users = [user.split('=')[1].split(',')[0] for user in users_dn]
 
-            response = json.loads(self.__ldap_connection.response_to_json())
+        return self.get_ldap_users()
 
-            if type(response.get("entries")) == list and len(response.get("entries")) > 0:
-                for entry in response.get("entries"):
-                    for member in entry.member.values:
-                        self.__ldap_connection.search(
-                            search_base=root_dn,
-                            search_filter=f"(distinguishedName={member})",
-                            attributes=["sAMAccountName"],
-                        )
+    def set_ldap_groups(self) -> List[str] | None:
+        """Set the ldap groups
 
-                        user = self.__ldap_connection.entries[0].sAMAccountName.values
+        Returns:
+            List[str] | None: Returns None if an error occurs in the process. Otherwise, returns the list of the ldap groups.
+        """
 
-                        self.__ldap_users.append(user)
-
-                cn_groups = response.get("entries")[0].get("attributes").get("member")
-
-                for cn_group in cn_groups:
-                    groups.append(cn_group.split(",")[0].replace("CN=", ""))
-
-                self.__ldap_groups = groups
-        except Exception as err:
-            logger.error(f'[set_ldap_users_and_groups] {err}')
+        if not self.is_user_authenticated():
+            logger.warning('[set_ldap_users] User is not authenticated. Skipping...')
             return None
 
-        return self.get_ldap_users(), self.get_ldap_groups()
+        groups_search_filter = '(objectClass=groupOfNames)'
+        groups_dn = self.__set_ldap_arrays(search_filter=groups_search_filter)
+
+        self.__ldap_groups = [group.split('=')[1].split(',')[0] for group in groups_dn]
+
+        return self.get_ldap_groups()

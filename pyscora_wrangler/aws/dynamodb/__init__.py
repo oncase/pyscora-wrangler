@@ -104,7 +104,7 @@ def get_data_by_key(
 
     dynamo_table = resource.Table(table_name)
     response = dynamo_table.query(KeyConditionExpression=Key(key).eq(value))
-    response = response.get("Items", [])
+    response = response.get('Items', [])
 
     if len(response) > 0:
         data = get_data_decoded(response[0]) if decode_data else response[0]

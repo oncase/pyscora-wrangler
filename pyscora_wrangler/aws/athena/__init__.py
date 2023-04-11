@@ -176,10 +176,10 @@ def athena_refresh(
             boto3_session=session,
         )
 
-        return {"table": table}
+        return {'table': table}
 
     async def _process_async(tables: Type[tables]):
-        logger.info("[athena_refresh_process_async] {0:<30} {1:>20}".format("File", "Completed at"))
+        logger.info('[athena_refresh_process_async] {0:<30} {1:>20}'.format('File', 'Completed at'))
         with ThreadPoolExecutor(max_workers=15) as executor:
             loop = asyncio.get_event_loop()
             tasks = [loop.run_in_executor(executor, _process, *table_meta) for table_meta in tables]

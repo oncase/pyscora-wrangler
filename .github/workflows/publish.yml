@@ -35,8 +35,8 @@ jobs:
         uses: marvinpinto/action-automatic-releases@v1.2.1
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          title: 'v1.1.4 Ldap authentication bug fixed'
+          title: 'v1.1.5 LDAP set_users and set_groups fixed'
           prerelease: false
-          automatic_release_tag: v1.1.4
+          automatic_release_tag: v1.1.5
           files: |
             LICENSE

@@ -16,7 +16,7 @@ def get_user_secret_hash(client_id: str, app_client_secret: str, username: str) 
         return None
 
     try:
-        dig = hmac.new(app_client_secret.encode("utf-8"), msg=msg.encode("utf-8"), digestmod=hashlib.sha256).digest()
+        dig = hmac.new(app_client_secret.encode('utf-8'), msg=msg.encode('utf-8'), digestmod=hashlib.sha256).digest()
         d2 = base64.b64encode(dig).decode()
 
         return d2
