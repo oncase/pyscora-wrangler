@@ -35,8 +35,8 @@ jobs:
         uses: marvinpinto/action-automatic-releases@v1.2.1
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          title: 'v1.1.5 LDAP set_users and set_groups fixed'
+          title: 'v1.2.0 Secrets Manager added'
           prerelease: false
-          automatic_release_tag: v1.1.5
+          automatic_release_tag: v1.2.0
           files: |
             LICENSE

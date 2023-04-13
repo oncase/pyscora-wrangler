@@ -1,3 +1,3 @@
-from . import athena, cognito, dynamodb
+from . import athena, cognito, dynamodb, secretsmanager
 
-__all__ = ['athena', 'cognito', 'dynamodb']
+__all__ = ['athena', 'cognito', 'dynamodb', 'secretsmanager']
