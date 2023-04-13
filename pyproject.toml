@@ -1,8 +1,8 @@
 [tool.poetry]
 name = "pyscora-wrangler"
-version = "1.1.5"
+version = "1.2.0"
 description = "Python lib for DE"
-authors = ["Oncase <suporte@oncase.com.br>"]
+authors = ["Oncase <contato@oncase.com.br>"]
 maintainers = ["Guilherme Morone <guilherme.morone@oncase.com.br>"]
 license = "MIT"
 readme = "README.md"
@@ -14,8 +14,7 @@ classifiers = [
     "Natural Language :: English",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.10"
 ]
 include = ["LICENSE"]
 
