@@ -218,6 +218,10 @@ Calling this action requires developer credentials.
 
 See `./dynamodb/__init__.py` for more details.
 
+## SecretsManager
+
+See `./secretsmanager/__init__.py` for more details.
+
 ## Other Services
 
 Check out [boto3 docs](https://boto3.amazonaws.com/v1/documentation/api/latest/index.html) and [awswrangler docs](https://pypi.org/project/awswrangler/) for more information.
