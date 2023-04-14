@@ -13,7 +13,7 @@ Requires only a config dictionary. An example with types can be seen below:
   "root_dn": "DC=service,DC=local", # REQUIRED. Type = str.
   "server": "ldap://localhost:389", # REQUIRED. Type = str.
   "port": 636, # OPTIONAL. Type = int. Default is 389.
-  "server_alias": ["service.com.br"] # OPTIONAL. Type = List[str]. Default is [].
+  "server_alias": ["service.com"] # OPTIONAL. Type = List[str]. Default is [].
 }
 
 ```

@@ -1,4 +1,3 @@
-import json
 from typing import Any, List, Dict, Tuple, Type
 from typeguard import check_type
 from ldap3 import Server, Connection, ALL, SUBTREE
@@ -148,17 +147,19 @@ class LdapService:
                 logger.info('[auth] Successful bind to ldap server.')
             else:
                 logger.error(f'[auth] Cannot bind to ldap server: {self.__ldap_connection.last_error}.')
+            logger.debug(f'[auth] {self.__ldap_connection}')
         except Exception as err:
             logger.error(f'[auth] {err}')
 
         return self.is_user_authenticated()
 
     def logout(self) -> None:
-        """Unbind the connect to the ldap server"""
+        """Unbind the connection to the ldap server"""
 
         if self.__ldap_connection:
             try:
                 self.__ldap_connection.unbind()
+                logger.info('[logout] Successful unbind to ldap server.')
             except Exception as err:
                 logger.error(f'[logout] {err}')
 
