@@ -32,9 +32,21 @@ typeguard = "^3.0.2"
 [tool.poetry.group.dev.dependencies]
 black = "^23.3.0"
 
+
+[tool.poetry.group.test.dependencies]
+pytest = "^7.3.1"
+
 [tool.black]
 line-length = 120
 skip-string-normalization = true
+
+[tool.pytest.ini_options]
+pythonpath = "."
+filterwarnings = "ignore::DeprecationWarning"
+log_cli=true
+log_cli_level="DEBUG"
+log_format = "%(asctime)s %(levelname)s %(message)s"
+log_date_format = "%d-%m-%Y %H:%M:%S"
 
 [build-system]
 requires = ["poetry-core>=1.4.0"]

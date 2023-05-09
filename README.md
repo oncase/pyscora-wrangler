@@ -47,3 +47,11 @@ Before committing the changes, remember to:
 
 - Change the **title** and **automatic_release_tag** at `.github/workflows/publish.yml`.
 - Change the **version** at `pyproject.toml`.
+
+## Run automated tests
+
+Assuming you have already installed `poetry`, run the command below:
+
+```sh
+poetry run pytest
+```
